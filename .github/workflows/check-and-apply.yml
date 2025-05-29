@@ -1,0 +1,25 @@
+name: Daily Certificate Check and Apply
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天 UTC 00:00 运行
+  workflow_dispatch:      # 允许手动触发
+
+jobs:
+  check-and-apply:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+        
+      - name: Run Certificate Check
+        run: node tencentCloud/main.js
+        env:
+          SECRET_ID: ${{ secrets.SECRET_ID }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          TOKEN: ${{ secrets.TOKEN }}

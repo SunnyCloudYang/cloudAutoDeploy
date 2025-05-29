@@ -8,9 +8,9 @@ const CreateRecord = require("./CreateRecord")
 const DeleteRecord = require("./DeleteRecord")
 const unzip = require("./unzip")
 
-const SECRET_ID = ""
-const SECRET_KEY = ""
-const TOKEN = ""
+const SECRET_ID = process.env.SECRET_ID || ""
+const SECRET_KEY = process.env.SECRET_KEY || ""
+const TOKEN = process.env.TOKEN || "" // 可选，默认为空
 
 // 检测证书状态
 async function CheckCertificateStatus(ApplyCertificate) {
@@ -72,35 +72,36 @@ async function handle(item) {
 
     // ************* 步骤 3：申请证书 *************
     const ApplyCertificate = await getApplyCertificate({ SECRET_ID, SECRET_KEY, TOKEN, DomainName })
+    console.log("ApplyCertificate", ApplyCertificate)
 
 
     // ************* 步骤 4 5：检测证书状态 *************
-    await CheckCertificateStatus(ApplyCertificate)
+    // await CheckCertificateStatus(ApplyCertificate)
 
 
     // ************* 步骤 6：获取下载证书链接 *************
-    const DescribeDownloadCertificateUrl = await getDescribeDownloadCertificateUrl({ SECRET_ID, SECRET_KEY, CertificateId: ApplyCertificate.CertificateId, ServiceType: "nginx" })
+    // const DescribeDownloadCertificateUrl = await getDescribeDownloadCertificateUrl({ SECRET_ID, SECRET_KEY, CertificateId: ApplyCertificate.CertificateId, ServiceType: "nginx" })
 
 
-    if (DescribeDownloadCertificateUrl.DownloadCertificateUrl && DescribeDownloadCertificateUrl.DownloadFilename) {
+    // if (DescribeDownloadCertificateUrl.DownloadCertificateUrl && DescribeDownloadCertificateUrl.DownloadFilename) {
 
-        // ************* 步骤 7：下载证书 *************
-        var filePath = await DownloadCertificate({
-            DownloadCertificateUrl: DescribeDownloadCertificateUrl.DownloadCertificateUrl,
-            DownloadFilename: DescribeDownloadCertificateUrl.DownloadFilename
-        })
+    //     // ************* 步骤 7：下载证书 *************
+    //     var filePath = await DownloadCertificate({
+    //         DownloadCertificateUrl: DescribeDownloadCertificateUrl.DownloadCertificateUrl,
+    //         DownloadFilename: DescribeDownloadCertificateUrl.DownloadFilename
+    //     })
 
-        // ************* 步骤 8：解压缩 *************
-        let pathRes = await unzip({filePath, DomainName})
+    //     // ************* 步骤 8：解压缩 *************
+    //     let pathRes = await unzip({filePath, DomainName})
 
 
-        // ************* 步骤 9：放置证书 *************
-        const fs = require('fs')
-        fs.copyFileSync(pathRes.nginx.crt, `/etc/nginx/${DomainName}_bundle.crt`)
-        fs.copyFileSync(pathRes.nginx.key, `/etc/nginx/${DomainName}.key`)
-        fs.rmSync(filePath, { recursive: true })
-        fs.rmSync(pathRes.nginx.zipDirPath, { recursive: true })
-    }
+    //     // ************* 步骤 9：放置证书 *************
+    //     const fs = require('fs')
+    //     fs.copyFileSync(pathRes.nginx.crt, `/etc/nginx/${DomainName}_bundle.crt`)
+    //     fs.copyFileSync(pathRes.nginx.key, `/etc/nginx/${DomainName}.key`)
+    //     fs.rmSync(filePath, { recursive: true })
+    //     fs.rmSync(pathRes.nginx.zipDirPath, { recursive: true })
+    // }
 
 }
 

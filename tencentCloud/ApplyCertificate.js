@@ -13,6 +13,7 @@ module.exports = async (event, context) => {
     const SECRET_ID = event.SECRET_ID
     const SECRET_KEY = event.SECRET_KEY
     const TOKEN = event.TOKEN
+    const DV_AUTH_METHOD = event.DV_AUTH_METHOD || "DNS_AUTO" // 默认自动DNS验证
 
     const host = "ssl.tencentcloudapi.com"
     const service = "ssl"
@@ -24,7 +25,7 @@ module.exports = async (event, context) => {
     // DvAuthMethod: DNS_AUTO = 自动DNS验证，DNS = 手动DNS验证，FILE = 文件验证。
     // DomainName: 申请的域名
     // const payload = `{"DvAuthMethod":"DNS_AUTO","DomainName":"${event.DomainName}"}`
-    const payload = `{"DvAuthMethod":"DNS","DomainName":"${event.DomainName}"}`
+    const payload = `{"DvAuthMethod":"${DV_AUTH_METHOD}","DomainName":"${event.DomainName}"}`
 
     const resp = await publicStep(
         SECRET_ID,
