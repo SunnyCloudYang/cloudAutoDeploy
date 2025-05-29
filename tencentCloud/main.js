@@ -153,7 +153,8 @@ async function main() {
     let Iterator = CertificatesMap.values()
     while (item = Iterator.next().value) {
         let CertEndTime = new Date(item.CertEndTime).getTime()
-        if (CertEndTime - time <= 3 * 24 * 60 * 60 * 1000) {
+        console.log(`Domain: ${item.Domain}, CertEndTime: ${item.CertEndTime}}`)
+        if (CertEndTime - time <= 90 * 24 * 60 * 60 * 1000) {
             handle(item)
         }
     }
